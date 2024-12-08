@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+
+  nest-back:
+    build: .
+    volumes:
+      - .:/nest-back
+    container_name: nest-back
+    hostname: nest-back
+    depends_on:
+      - nest-db
+    ports:
+      - '3001:3001'
+    expose:
+      - '3001'
+    restart: unless-stopped
+    env_file: ./.env
+    networks:
+      - nest-store
+
+  nest-db:
+    image:  postgres:15.2-alpine3.17
+    container_name: nest-db
+    hostname: nest-db
+    env_file: ./.env
+    volumes:
+      - ./volumes/db:/var/lib/postgresql/data
+    expose:
+      - '5432'
+    ports:
+      - '5432:5432'
+    restart: always
+    networks:
+      - nest-store
+
+networks:
+  nest-store:
+    external: true
+
